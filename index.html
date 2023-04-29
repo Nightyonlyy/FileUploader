@@ -16,7 +16,6 @@ h1 {
   letter-spacing: -0.5px;
   font-size: 36px;
 }
-
 .file-upload {
   height: 40px;
   line-height: 40px;
@@ -29,18 +28,15 @@ h1 {
   font-weight: 600;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
 .file-upload:hover {
   background-color: #113e9f;
 }
-
 .button-container {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 20px;
 }
-
 .upload-button {
   height: 40px;
   background-color: #4caf50;
@@ -54,15 +50,12 @@ h1 {
   cursor: pointer;
   transition: all 0.3s ease;
 }
-
 .upload-button:hover {
   background-color: #113e9f;
 }
-
 #file {
   display: none;
 }
-
 .file-name {
   text-align: center;
   margin-top: 20px;
@@ -71,7 +64,6 @@ h1 {
   color: #3b3b3b;
   letter-spacing: -0.5px;
 }
-
 .success-message {
   text-align: center;
   margin-top: 20px;
@@ -84,14 +76,11 @@ h1 {
   font-weight: 600;
   letter-spacing: -0.5px;
 }
-
 .button-container {
   text-align: center;
 }
-
-    </style>
-  </head>
-  
+</style>
+ </head>
   <body>
     <h1>Datei-Upload</h1>
     <form action="/upload" method="post" enctype="multipart/form-data">
@@ -103,7 +92,6 @@ h1 {
       <p class="file-name"></p>
     </form>
     <div class="success-message">Datei erfolgreich hochgeladen!</div>
-
     <script>
       function setFileName() {
         const input = document.getElementById('file');
