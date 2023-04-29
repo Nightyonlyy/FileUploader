@@ -56,7 +56,7 @@ const server = http.createServer((req, res) => {
     });
   }
   if (req.url === '/runscript' && req.method === 'GET') {
-    exec('python3 testpython.py', (err, stdout, stderr) => {
+    exec('python3 /home/dietpi//epaper-photoslide-main/bilderrahmen.py', (err, stdout, stderr) => {
       if (err) {
         console.error(err);
         res.writeHead(500, {'Content-Type': 'text/plain'});
