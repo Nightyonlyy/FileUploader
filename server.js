@@ -7,14 +7,12 @@ const config = require('./config.json');
 const port = config.port || 3000;
 const uploadDir = path.join(__dirname, 'pics');
 
-// Ensure the upload directory exists
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
 
 const server = http.createServer((req, res) => {
   if (req.url === '/' && req.method === 'GET') {
-    // Serve the HTML file
     fs.readFile('index.html', (err, data) => {
       if (err) {
         logError(err);
@@ -27,7 +25,6 @@ const server = http.createServer((req, res) => {
       res.end(data);
     });
   } else if (req.url === '/upload' && req.method === 'POST') {
-    // Handle file upload
     const chunks = [];
     let totalSize = 0;
 
