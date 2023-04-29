@@ -1,15 +1,23 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const { DateTime } = require('luxon');
+const config = require('./config.json');
 
-const port = 3000;
+const port = config.port || 3000;
 const uploadDir = path.join(__dirname, 'pics');
+
+// Ensure the upload directory exists
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir);
+}
 
 const server = http.createServer((req, res) => {
   if (req.url === '/' && req.method === 'GET') {
     // Serve the HTML file
     fs.readFile('index.html', (err, data) => {
       if (err) {
+        logError(err);
         res.writeHead(500, {'Content-Type': 'text/plain'});
         res.end(`Error loading HTML file: ${err}`);
         return;
@@ -35,6 +43,7 @@ const server = http.createServer((req, res) => {
 
       fs.writeFile(filePath, buffer, (err) => {
         if (err) {
+          logError(err);
           res.writeHead(500, {'Content-Type': 'text/plain'});
           res.end(`Error writing file: ${err}`);
           return;
@@ -53,3 +62,13 @@ const server = http.createServer((req, res) => {
 server.listen(port, () => {
   console.log(`Server started on port ${port}`);
 });
+
+function logError(err) {
+  const timestamp = DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss');
+  const errorMessage = `[${timestamp}] ${err.message}`;
+  fs.appendFile('error.log', errorMessage, (err) => {
+    if (err) {
+      console.error(`Error writing to log file: ${err}`);
+    }
+  });
+}
