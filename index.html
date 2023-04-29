@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Bilder Hochladen</title>
+    <style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: hsl(0, 0%, 13%);
+}
+h1 {
+  text-align: center;
+  margin-top: 50px;
+  font-weight: 700;
+  color: #f1f1f1;
+  letter-spacing: -0.5px;
+  font-size: 36px;
+}
+
+.file-upload {
+  height: 40px;
+  line-height: 40px;
+  border-radius: 40px;
+  color: #fff;
+  background-color: #0095d0;
+  border: none;
+  padding: 0 20px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.file-upload:hover {
+  background-color: #113e9f;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.upload-button {
+  height: 40px;
+  background-color: #4caf50;
+  color: #00d82f;
+  border: none;
+  border-radius: 5px;
+  padding: 0 20px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.upload-button:hover {
+  background-color: #113e9f;
+}
+
+#file {
+  display: none;
+}
+
+.file-name {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #3b3b3b;
+  letter-spacing: -0.5px;
+}
+
+.success-message {
+  text-align: center;
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #43a047;
+  color: #fff;
+  border-radius: 5px;
+  display: none;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.button-container {
+  text-align: center;
+}
+
+    </style>
+  </head>
+  
+  <body>
+    <h1>Datei-Upload</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <div class="button-container">
+        <label for="file" class="file-upload">Datei auswählen</label>
+        <input type="file" name="file" id="file" />
+        <button type="button" onclick="setFileName()" class="file-upload">Speichern</button>
+      </div>      
+      <p class="file-name"></p>
+    </form>
+    <div class="success-message">Datei erfolgreich hochgeladen!</div>
+
+    <script>
+      function setFileName() {
+        const input = document.getElementById('file');
+        const file = input.files[0];
+        const fileNameElement = document.querySelector('.file-name');
+        fileNameElement.textContent = file.name;
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/upload', true);
+        xhr.setRequestHeader('X-File-Name', file.name);
+        xhr.send(file);
+        const successMessage = document.querySelector('.success-message');
+        successMessage.style.display = 'block';
+      }
+    </script>
+  </body>
+</html>
