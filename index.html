@@ -64,6 +64,16 @@
          color: #ffffff;
          letter-spacing: -0.5px;
          }
+
+         .text-name {
+         text-align: center;
+         margin-top: 20px;
+         font-size: 18px;
+         font-weight: 600;
+         color: #ffffff;
+         letter-spacing: -0.5px;
+         }
+
          .button-container {
          text-align: center;
          }
@@ -107,52 +117,103 @@
          }
       </style>
    </head>
-   <body>
-      <h1>Bilder Hochladen</h1>
-      <form action="/upload" method="post" enctype="multipart/form-data">
-         <div class="button-container">
-            <label for="file" class="file-upload">Datei auswählen</label>
-            <input type="file" name="file" id="file" />
-            <button type="button" onclick="setFileName()" class="file-upload">Speichern</button>
-         </div>
-         <p class="file-name"></p>
-      </form>
-      <div class="success-message"></div>
-      <div class="error-message"></div>
-      <script>
-         function setFileName() {
-         const fileInput = document.getElementById('file');
-         const filePath = fileInput.value;
-         const fileName = filePath.substring(filePath.lastIndexOf('\\') + 1);
-         const fileNameElement = document.querySelector('.file-name');
-         fileNameElement.textContent = fileName;
-         
-         const file = fileInput.files[0];
-         
-         const xhr = new XMLHttpRequest();
-         xhr.open('POST', '/upload', true);
-         xhr.setRequestHeader('X-File-Name', file.name);
-         
-         xhr.onreadystatechange = function() {
-         if (xhr.readyState === 4) {
-         if (xhr.status === 200) {
-           const successMessage = document.querySelector('.success-message');
-           successMessage.textContent = 'Datei erfolgreich hochgeladen!';
-           successMessage.classList.add('show');
-         
-           setTimeout(function() {
-             successMessage.classList.remove('show');
-           }, 2000);
-         } else {
-           const errorMessage = document.querySelector('.error-message');
-           errorMessage.textContent = 'Datei konnte nicht hochgeladen werden';
-           errorMessage.classList.add('show');
-         }
-         }
-         };
-         xhr.send(file);
-         }
-         
-      </script>
-   </body>
+   <body onload="displayLastUploaded()">
+    <h1>Upload Files</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <div class="button-container">
+        <label for="file" class="file-upload">CHOOSE FILE</label>
+        <input type="file" name="file" id="file" onchange="setFileName()" />
+  <!-- <button type="button" onclick="setFileName()" class="file-upload">SAVE</button> --> 
+        <button type="button" onclick="reloadPanel()" class="file-upload">RELOAD</button>
+      </div>
+      <p class="text-name">Uploaded</p>
+      <p class="file-name" id="uploadedFileName"></p>
+      <p> </p>
+      <p class="text-name">Last Upload</p>
+      <p class="file-name" id="lastUploaded"></p>
+    </form>
+    <div class="success-message"></div>
+    <div class="error-message"></div>
+    <script>
+      function setFileName() {
+        const fileInput = document.getElementById('file');
+        const filePath = fileInput.value;
+        const fileName = filePath.substring(filePath.lastIndexOf('\\') + 1);
+        const fileNameElement = document.querySelector('.file-name');
+        fileNameElement.textContent = fileName;
+        document.querySelector('.text-name').classList.add('show');
+    
+        const file = fileInput.files[0];
+    
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/upload', true);
+        xhr.setRequestHeader('X-File-Name', file.name);
+    
+        xhr.onreadystatechange = function() {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              const successMessage = document.querySelector('.success-message');
+              successMessage.textContent = 'Datei erfolgreich hochgeladen!';
+              successMessage.classList.add('show');
+    
+              setTimeout(function() {
+                successMessage.classList.remove('show');
+              }, 2000);
+    
+              setTimeout(function() {
+                window.location.reload();
+              }, 4000);
+            } else {
+              const errorMessage = document.querySelector('.error-message');
+              errorMessage.textContent = 'Datei konnte nicht hochgeladen werden';
+              errorMessage.classList.add('show');
+            }
+          }
+        };
+        xhr.send(file);
+      }
+  
+      function reloadPanel() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/runscript');
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+              const successMessage = document.querySelector('.success-message');
+              successMessage.textContent = 'Neues Bild wurde erfolgreich geladen!';
+              successMessage.classList.add('show');
+  
+              setTimeout(function () {
+                successMessage.classList.remove('show');
+              }, 2000);
+  
+              setTimeout(function () {
+                window.location.reload();
+              }, 4000);
+            } else {
+              const errorMessage = document.querySelector('.error-message');
+              errorMessage.textContent = 'Bild konnte nicht geladen werden';
+              errorMessage.classList.add('show');
+            }
+          }
+        };
+        xhr.send();
+      }
+
+      function displayLastUploaded() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', '/lastuploaded');
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            const lastUploaded = document.getElementById('lastUploaded');
+            const timestamp = response.timestamp;
+            lastUploaded.innerHTML = `Name: ${response.name}<br>Time: ${timestamp}`;
+            lastUploaded.innerHTML = `File : ${response.name}<br>Timestamp : ${timestamp}`;
+          }
+        };
+        xhr.send();
+      }
+    </script>
+  </body>    
 </html>
