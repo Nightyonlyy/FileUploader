@@ -5,30 +5,45 @@ const { DateTime } = require('luxon');
 const config = require('./config.json');
 const { exec } = require('child_process');
 const port = config.port || 3000;
-var filePath = config.picturePath;
-const uploadDir = path.join(__dirname, filePath);
+
+const uploadDir = path.join(__dirname, config.picturePath || 'uploads');
 
 // Ensure the upload directory exists
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
-const server = http.createServer((req, res) => {
-  if (req.url === '/' && req.method === 'GET') {
-    // Serve the HTML file
-    fs.readFile('index.html', (err, data) => {
-      if (err) {
-        logError(err);
-        res.writeHead(500, {'Content-Type': 'text/plain'});
-        res.end(`Error loading HTML file: ${err}`);
-        return;
-      }
 
-      res.writeHead(200, {'Content-Type': 'text/html'});
-      res.end(data);
-    });
-  } 
-  if (req.url === '/upload' && req.method === 'POST') {
-    // Handle file upload
+const mimeTypes = {
+  '.html': 'text/html',
+  '.css': 'text/css',
+  '.js': 'application/javascript',
+  // add other MIME types as needed
+};
+
+// Static file handler
+function serveStaticFile(res, filePath) {
+  const ext = path.extname(filePath);
+  const mimeType = mimeTypes[ext] || 'text/plain';
+
+  fs.readFile(filePath, (err, data) => {
+    if (err) {
+      logError(err);
+      res.writeHead(404, {'Content-Type': 'text/plain'});
+      res.end(`File not found: ${err.message}`);
+      return;
+    }
+    res.writeHead(200, {'Content-Type': mimeType});
+    res.end(data);
+  });
+}
+
+const server = http.createServer((req, res) => {
+  // Route for serving static files
+  if (req.method === 'GET' && req.url !== '/upload' && req.url !== '/runscript' && req.url !== '/lastuploaded') {
+    const filePath = req.url === '/' ? 'index.html' : req.url;
+    const resolvedPath = path.join(__dirname, filePath);
+    serveStaticFile(res, resolvedPath);
+  } else if (req.url === '/upload' && req.method === 'POST') {
     const chunks = [];
     let totalSize = 0;
 
@@ -54,8 +69,7 @@ const server = http.createServer((req, res) => {
         res.end('File uploaded successfully!');
       });
     });
-  }
-  if (req.url === '/runscript' && req.method === 'GET') {
+  } else if (req.url === '/runscript' && req.method === 'GET') {
     exec('python3 /home/dietpi//epaper-photoslide-main/bilderrahmen.py', (err, stdout, stderr) => {
       if (err) {
         console.error(err);
@@ -68,8 +82,7 @@ const server = http.createServer((req, res) => {
         res.end(stdout);
       }
     });
-  }
-  if (req.url === '/lastuploaded' && req.method === 'GET') {
+  } else if (req.url === '/lastuploaded' && req.method === 'GET') {
     fs.readdir(uploadDir, (err, files) => {
       if (err) {
         logError(err);
@@ -96,17 +109,19 @@ const server = http.createServer((req, res) => {
         res.end('No files uploaded yet');
       }
     });
-  }   
+  }
 });
+
 server.listen(port, () => {
   console.log(`Server started on port ${port}`);
 });
+
 function logError(err) {
   const timestamp = DateTime.now().toFormat('yyyy-MM-dd HH:mm:ss');
-  const errorMessage = `[${timestamp}] ${err.message}`;
+  const errorMessage = `[${timestamp}] ${err.message}\n`;
   fs.appendFile('error.log', errorMessage, (err) => {
     if (err) {
-      console.error(`Error writing to log file: ${err}`);
+      console.error(`Error writing to log file: ${err.message}`);
     }
   });
 }
