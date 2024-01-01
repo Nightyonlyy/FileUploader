@@ -1,6 +1,4 @@
-0. Download code
 1. create pics folder where index.html and server.js is located
-2. npm install luxon
-3. start server
+2. start server
     -> node server.js
-4. Join on http://localhost:3000
+3. open the webUI via ip:port (example: localhost:3000)
