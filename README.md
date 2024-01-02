@@ -22,5 +22,7 @@ localhost:3000
 ```
 
 Anpassungen können in der config datei vorgenommen werden
-**Wichtig:**
-Aktuelle Anpassungen in der config datei sind nur der port für die weboberfläche
+<div style="background-color:yellow; color:black; padding:10px;">
+    <strong>Warnung:</strong> Aktuelle Anpassungen in der config datei sind nur der port für die weboberfläche
+</div>
+
