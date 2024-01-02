@@ -6,9 +6,8 @@ const config = require('./config.json');
 const { exec } = require('child_process');
 const port = config.port || 3000;
 
-const uploadDir = path.join(__dirname, config.picturePath || 'uploads');
+const uploadDir = path.join(__dirname, config.path || 'uploads');
 
-// Ensure the upload directory exists
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);
 }
@@ -17,10 +16,8 @@ const mimeTypes = {
   '.html': 'text/html',
   '.css': 'text/css',
   '.js': 'application/javascript',
-  // add other MIME types as needed
 };
 
-// Static file handler
 function serveStaticFile(res, filePath) {
   const ext = path.extname(filePath);
   const mimeType = mimeTypes[ext] || 'text/plain';
@@ -38,7 +35,6 @@ function serveStaticFile(res, filePath) {
 }
 
 const server = http.createServer((req, res) => {
-  // Route for serving static files
   if (req.method === 'GET' && req.url !== '/upload' && req.url !== '/runscript' && req.url !== '/lastuploaded') {
     const filePath = req.url === '/' ? 'index.html' : req.url;
     const resolvedPath = path.join(__dirname, filePath);
