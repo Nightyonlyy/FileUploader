@@ -8,4 +8,4 @@
 Schritte zur Installation der Anwendung auf einem Server.
 
 1. Klonen Sie das Repository auf Ihren Server:
-2. ´´´git clone ´´´
+2. ```git clone https://github.com/Nightyonlyy/FileUploader.git```
