@@ -86,3 +86,22 @@ function displayLastUploaded() {
       // Handle any errors
     });
 }
+
+function displayLastProcessed() {
+  fetch('/lastprocessed')
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Failed to load last processed');
+      }
+    })
+    .then(data => {
+      const lastProcessed = document.getElementById('lastProcessed');
+      const timestamp = data.timestamp;
+      lastProcessed.innerHTML = `File: ${data.name}<br>${timestamp}`;
+    })
+    .catch(error => {
+      // Handle any errors
+    });
+}
